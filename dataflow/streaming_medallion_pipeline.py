@@ -5,7 +5,6 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions, StandardOptions
 from apache_beam.transforms.window import FixedWindows
 
-# ------------------- Load Environment Variables -------------------
 load_dotenv()
 PROJECT_ID = os.getenv("GCP_PROJECT")
 PUBSUB_SUBSCRIPTION = os.getenv("PUBSUB_SUBSCRIPTION")
@@ -16,7 +15,6 @@ TEMP_LOCATION = os.getenv("TEMP_LOCATION")
 STAGING_LOCATION = os.getenv("STAGING_LOCATION")
 REGION = os.getenv("REGION")
 
-# ------------------- Beam Pipeline Options -------------------
 pipeline_options = PipelineOptions(
     project=PROJECT_ID,
     streaming=True,
@@ -26,7 +24,6 @@ pipeline_options = PipelineOptions(
 )
 pipeline_options.view_as(StandardOptions).streaming = True
 
-# ------------------- Helper Functions -------------------
 def parse_json(message):
     try:
         return json.loads(message)
@@ -74,10 +71,10 @@ def enrich_record(record):
         record["risk_level"] = "High"
     return record
 
-# ------------------- Pipeline -------------------
+
 with beam.Pipeline(options=pipeline_options) as p:
 
-    # ------------------- Bronze Layer -------------------
+   
     bronze_data = (
         p
         | "Read from PubSub" >> beam.io.ReadFromPubSub(subscription=PUBSUB_SUBSCRIPTION)
@@ -85,13 +82,13 @@ with beam.Pipeline(options=pipeline_options) as p:
         | "Window Bronze Data" >> beam.WindowInto(FixedWindows(60))  # 1-minute windows
     )
 
-    # Write raw messages to Bronze GCS
+    
     bronze_data | "Write Bronze to GCS" >> beam.io.WriteToText(
         BRONZE_PATH + "raw_data",
         file_name_suffix=".json"
     )
 
-    # ------------------- Silver Layer -------------------
+    
     silver_data = (
         bronze_data
         | "Parse JSON" >> beam.Map(parse_json)
@@ -106,7 +103,7 @@ with beam.Pipeline(options=pipeline_options) as p:
         file_name_suffix=".json"
     )
 
-    # ------------------- Gold Layer -------------------
+    
     def extract_for_aggregation(record):
         return (record["patient_id"], record)
 
@@ -138,7 +135,7 @@ with beam.Pipeline(options=pipeline_options) as p:
         | "Aggregate per patient" >> beam.Map(aggregate_records)
     )
 
-    # Write Gold to BigQuery
+    
     gold_data | "Write Gold to BigQuery" >> beam.io.WriteToBigQuery(
         BIGQUERY_TABLE,
         write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
