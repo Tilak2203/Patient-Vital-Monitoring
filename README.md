@@ -192,9 +192,13 @@ Risk Levels:
 
 The Power BI dashboard connects to BigQuery and provides:
 
+<img width="1919" height="906" alt="image" src="https://github.com/user-attachments/assets/85202970-ba5a-4377-b815-00aa1fa4c455" />
+
+
 1. **Real-time Patient Monitoring**: Live vital signs for all patients
 2. **Risk Alert Panel**: Patients with High/Moderate risk levels
 3. **Trend Analysis**: Historical vital sign patterns
 4. **Anomaly Detection**: Sudden changes in patient condition
 5. **KPI Cards**: Average vitals, total patients, risk distribution
+
 
