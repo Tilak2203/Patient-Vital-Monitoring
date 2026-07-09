@@ -198,8 +198,3 @@ The Power BI dashboard connects to BigQuery and provides:
 4. **Anomaly Detection**: Sudden changes in patient condition
 5. **KPI Cards**: Average vitals, total patients, risk distribution
 
-
-
----
-
-**⚠️ Disclaimer**: This is a demonstration project using simulated data. It is not intended for actual clinical use and should not be used for real patient monitoring without proper medical device certification and regulatory compliance.
